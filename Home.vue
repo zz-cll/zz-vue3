@@ -5,11 +5,10 @@
         <img style="height:100%;width:100%" src="../../../HC.png" alt="">
       </div> -->
       <a-menu theme="dark"
-        mode="inline" 
-        :openKeys="openKeys"
+       mode="inline" 
+       :openKeys="openKeys"
         v-model:selectedKeys="selectedKeys" 
         @click="goroute" 
-        :forceSubMenuRender='true'
         @openChange="onOpenChange">
         <template
           v-for="(firstItem) in routerList"
@@ -123,13 +122,14 @@
   <a-modal v-model:visible="outModal" title="提示" footer="" :zIndex="1500">
     <div class="outModalText">是否确认退出系统？</div>
     <div class="outModalButton">
-        <a-button type="danger" @click="outModal = false" >取 消</a-button>
-        <a-button type="primary" @click="out" style="marginLeft:10px" >确 定</a-button>
+      <a-button type="danger" @click="outModal = false" >取 消</a-button>
+      <a-button type="primary" @click="out" style="marginLeft:10px" >确 定</a-button>
     </div>  
   </a-modal>
 </template>
 <script>
 import { DownOutlined  } from "@ant-design/icons-vue";
+// import {ref,reactive,computed,watch} from 'vue'
 import tagview from '../components/Tags'
 export default {
   name: "Home",
@@ -151,24 +151,22 @@ export default {
         {
           icon: "iconfont iconleft-icon-home",
           index: "home",
-          title: "首页"
+          title: "首页",
+          subs:[{
+            icon: "iconfont iconleft-icon-home",
+            index: "ceshi",
+            title: "测试",
+          }]
         },
         {
           icon: "iconfont iconleft-icon-home",
           index: "Administration",
-          title: "管理"
+          title: "管理",
         },
         {
           icon: "iconfont iconleft-icon-home",
           index: "Setting",
           title: "设置",
-          subs:[
-            {
-              icon: "iconfont iconleft-icon-home",
-              index: "ceshi",
-              title: "测试",
-            }
-          ]
         },
         {
           icon: "iconfont iconleft-icon-home",
@@ -178,13 +176,28 @@ export default {
             {
               icon: "iconfont iconleft-icon-home",
               index: "two",
+              title: "二级路由",
+            },
+            {
+              icon: "iconfont iconleft-icon-home",
+              index: "two",
               title: "二级",
               subs:[
                 {
                   icon: "iconfont iconleft-icon-home",
                   index: "three",
+                  title: "三级路由",
+                },
+                {
+                  icon: "iconfont iconleft-icon-home",
+                  index: "three",
                   title: "三级",
                   subs:[
+                    {
+                      icon: "iconfont iconleft-icon-home",
+                      index: "four",
+                      title: "四级路由",
+                    },
                     {
                       icon: "iconfont iconleft-icon-home",
                       index: "four",
@@ -204,17 +217,14 @@ export default {
           ]
         },
       ],
-      array:[],
-      searr:[]
     };
   },
   computed: {
     rootSubmenuKeys: (vm) => {
       let keys = []
       vm.routerList.forEach(item => {
-        vm.getmenu(item) 
+        keys.push(item.index)
       })
-      keys = vm.array
       return keys
     }
   },
@@ -225,51 +235,15 @@ export default {
   },
   created(){
     this.username = sessionStorage.getItem('username')
-    this.getmensitem(this.$route.name)
   },
   methods:{
-    getmenu(e){
-      if(e.subs){
-        this.array.push(e.index)
-        for(let x=0;x<e.subs.length;x++){
-          this.getmenu(e.subs[x])
-        }
-      }
-    },
-    getmensitem(e){
-      for(let y = 0;y<this.routerList.length;y++){
-        this.searr = []
-        if(this.routerList[y].index==e){
-          return
-        }
-        else{
-          this.getmens(this.routerList[y],e)
-        }
-      }
-    },
-    getmens(e,k){
-      if(e.subs){
-        this.searr.push(e.index)
-        for(let s=0;s<e.subs.length;s++){
-          if(e.subs[s].index==k){
-            this.openKeys = this.searr
-            break 
-          }
-          if(e.subs[s].subs){
-            this.getmens(e.subs[s],k)
-          }
-        }
-      } 
-    },
     onOpenChange(openKeys) {
-      // const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1);
-      // this.openKeys = []
-      this.openKeys = openKeys;
-      // if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-      //   this.openKeys = openKeys;
-      // } else {
-      //   this.openKeys = latestOpenKey ? [latestOpenKey] : [];
-      // }
+      const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1);
+      if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+        this.openKeys = openKeys;
+      } else {
+        this.openKeys = latestOpenKey ? [latestOpenKey] : [];
+      }
     },
     async goroute(gopath){
       this.$router.push(gopath.key)

@@ -1,12 +1,18 @@
 module.exports = {
-  root: true,
+  root: false,
   env: {
-    node: true
+    node: false
   },
+  
   'extends': [
     'plugin:vue/vue3-essential',
     'eslint:recommended'
   ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly",
+    "process": true
+  },
   parserOptions: {
     parser: 'babel-eslint'
   },
